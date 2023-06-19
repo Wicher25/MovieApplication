@@ -22,22 +22,15 @@ public class MovieActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie);
-
-
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
-
-       // getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
         activityMovieBinding = DataBindingUtil.setContentView(this, R.layout.activity_movie);
 
-
-
-
         Intent i = getIntent();
-        if (i.hasExtra("movie"))
-        {
-            movie = getIntent().getParcelableExtra("movie");
+        if (i.hasExtra("Movie")) {
+            movie = getIntent().getParcelableExtra("Movie");
+            activityMovieBinding.setMovie(movie); // Set the movie object to the data binding variable
+        } else {
+            Toast.makeText(this, "No movie found", Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 }
