@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/mylibrary_fr"
+        android:title= "MyLibrary"
+        android:icon="@drawable/ic_library"
+        />
+    <item
+        android:id="@+id/discover_fr"
+        android:title= "discover"
+        android:icon="@drawable/ic_discover"
+        />
+
+    <item
+        android:id="@+id/settings_fr"
+        android:title= "Settings"
+        android:icon="@drawable/ic_settings"
+        />
+
+</menu>
