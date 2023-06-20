@@ -10,4 +10,10 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <color name="dark_background">#4e4f63</color>
+    <color name="light_background">#FFFFFF</color>
+    <color name="dark_text">#c8c9db</color>
+    <color name="light_text">#000000</color>
+
 </resources>

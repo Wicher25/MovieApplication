@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,9 +8,42 @@
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize = "48sp"
-        android:text="Settings" />
+        android:id="@+id/SettingsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Settings"
+        android:layout_gravity="center"
+        android:layout_marginTop="-300dp"
+        android:textSize="40sp" />
+
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/duzy_text"
+        android:layout_width="370dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="500dp"
+        android:text="      Duży Tekst"
+        android:textColor="@color/black"
+        android:textColorHighlight="#FFEB3B"
+        android:textColorLink="#673AB7"
+        android:thumb="@drawable/thumb"
+        app:track="@drawable/track"
+
+        />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/ciemny_motyw"
+        android:layout_width="370dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="450dp"
+        android:text="      Ciemny Motyw"
+        android:textColor="@color/black"
+        android:textColorHighlight="#FFEB3B"
+        android:textColorLink="#673AB7"
+        android:thumb="@drawable/thumb"
+        app:layout_constraintTop_toBottomOf="@+id/ciemny_motyw"
+        app:track="@drawable/track"
+
+        />
 
 </FrameLayout>
