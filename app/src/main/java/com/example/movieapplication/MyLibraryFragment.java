@@ -2,63 +2,74 @@ package com.example.movieapplication;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MyLibraryFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.example.movieapplication.adapters.MovieAdapter;
+
+import com.example.movieapplication.databinding.FragmentMyLibraryBinding;
+import com.example.movieapplication.model.Movie;
+import com.example.movieapplication.viewmodel.MainActivityViewModel;
+import com.example.movieapplication.viewmodel.MainActivityViewModel_Now_Playing;
+
+import java.util.ArrayList;
+
 public class MyLibraryFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private ArrayList<Movie> movies;
+    private RecyclerView recyclerView;
+    private MovieAdapter movieAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
-    public MyLibraryFragment() {
-        // Required empty public constructor
-    }
+    private MainActivityViewModel_Now_Playing mainActivityViewModel_Now_Playing;
+    private FragmentMyLibraryBinding fragmentMyLibraryBinding;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MyLibraryFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MyLibraryFragment newInstance(String param1, String param2) {
-        MyLibraryFragment fragment = new MyLibraryFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        fragmentMyLibraryBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_library, container, false);
+        return fragmentMyLibraryBinding.getRoot();
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
+        mainActivityViewModel_Now_Playing = new ViewModelProvider(requireActivity()).get(MainActivityViewModel_Now_Playing.class);
+
+        swipeRefreshLayout = fragmentMyLibraryBinding.swipeLayoutNowPlaying;
+        swipeRefreshLayout.setColorSchemeResources(R.color.black);
+        swipeRefreshLayout.setOnRefreshListener(() -> getNowPlayingMovies());
+
+        getNowPlayingMovies();
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_library, container, false);
+    private void getNowPlayingMovies() {
+        mainActivityViewModel_Now_Playing.getAllMovies().observe(getViewLifecycleOwner(), moviesFromLiveData -> {
+            movies = new ArrayList<>(moviesFromLiveData);
+            showOnRecyclerView();
+        });
+    }
+
+    private void showOnRecyclerView() {
+        recyclerView = fragmentMyLibraryBinding.rvMoviesNowPlaying;
+        movieAdapter = new MovieAdapter(requireContext(), movies);
+
+        recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(movieAdapter);
+        movieAdapter.notifyDataSetChanged();
     }
 }
