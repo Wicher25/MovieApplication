@@ -1,5 +1,6 @@
 package com.example.movieapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,31 +11,29 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
-import com.example.movieapplication.adapters.MovieAdapter;
-
+import com.example.movieapplication.adapters.MovieAdapter_Now_Playing;
 import com.example.movieapplication.databinding.FragmentMyLibraryBinding;
 import com.example.movieapplication.model.Movie;
-import com.example.movieapplication.viewmodel.MainActivityViewModel;
+import com.example.movieapplication.view.MovieActivity;
 import com.example.movieapplication.viewmodel.MainActivityViewModel_Now_Playing;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class MyLibraryFragment extends Fragment {
 
-
-    private ArrayList<Movie> movies;
-    private RecyclerView recyclerView;
-    private MovieAdapter movieAdapter;
-    private SwipeRefreshLayout swipeRefreshLayout;
-
     private MainActivityViewModel_Now_Playing mainActivityViewModel_Now_Playing;
     private FragmentMyLibraryBinding fragmentMyLibraryBinding;
+
+    private ArrayList<Movie> movies;
+    private MovieAdapter_Now_Playing movieAdapter;
+    private RecyclerView recyclerView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,30 +45,39 @@ public class MyLibraryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
         mainActivityViewModel_Now_Playing = new ViewModelProvider(requireActivity()).get(MainActivityViewModel_Now_Playing.class);
-
-        swipeRefreshLayout = fragmentMyLibraryBinding.swipeLayoutNowPlaying;
-        swipeRefreshLayout.setColorSchemeResources(R.color.black);
-        swipeRefreshLayout.setOnRefreshListener(() -> getNowPlayingMovies());
-
-        getNowPlayingMovies();
+        fragmentMyLibraryBinding.RandomMoviesButton.setOnClickListener(v -> generateRandomMovie());
     }
 
-    private void getNowPlayingMovies() {
+    private void generateRandomMovie() {
         mainActivityViewModel_Now_Playing.getAllMovies().observe(getViewLifecycleOwner(), moviesFromLiveData -> {
-            movies = new ArrayList<>(moviesFromLiveData);
-            showOnRecyclerView();
+            if (moviesFromLiveData != null && !moviesFromLiveData.isEmpty()) {
+                int randomIndex = new Random().nextInt(moviesFromLiveData.size());
+                Movie randomMovie = moviesFromLiveData.get(randomIndex);
+                showOnRecyclerView(randomMovie);
+            }
         });
     }
 
-    private void showOnRecyclerView() {
-        recyclerView = fragmentMyLibraryBinding.rvMoviesNowPlaying;
-        movieAdapter = new MovieAdapter(requireContext(), movies);
+    private void showOnRecyclerView(Movie movie) {
+        movies = new ArrayList<>();
+        movies.add(movie);
+        movieAdapter = new MovieAdapter_Now_Playing(requireContext(), movies);
 
-        recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(movieAdapter);
+        fragmentMyLibraryBinding.rvMoviesNowPlaying.setLayoutManager(new GridLayoutManager(requireContext(), 1));
+        fragmentMyLibraryBinding.rvMoviesNowPlaying.setItemAnimator(new DefaultItemAnimator());
+        fragmentMyLibraryBinding.rvMoviesNowPlaying.setAdapter(movieAdapter);
         movieAdapter.notifyDataSetChanged();
+
+        movieAdapter.setOnItemClickListener(new MovieAdapter_Now_Playing.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Movie selectedMovie = movies.get(position);
+
+                Intent i = new Intent(requireContext(), MovieActivity.class);
+                i.putExtra("Movie", selectedMovie);
+                startActivity(i);
+            }
+        });
     }
 }

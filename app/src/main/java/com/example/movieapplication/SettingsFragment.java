@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 public class SettingsFragment extends Fragment {
 
@@ -35,7 +36,7 @@ public class SettingsFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         // Initialize SharedPreferences
-        sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         editor = sharedPreferences.edit();
     }
 
@@ -45,6 +46,7 @@ public class SettingsFragment extends Fragment {
 
         fridgeTextView = view.findViewById(R.id.SettingsTextView);
         duzyTextSwitch = view.findViewById(R.id.duzy_text);
+        ciemnyMotywSwitch = view.findViewById(R.id.ciemny_motyw); // Initialize the switch here
 
         // Retrieve Dark Mode and Large Text state
         boolean isDarkMode = sharedPreferences.getBoolean("darkModeState", false);
@@ -66,7 +68,6 @@ public class SettingsFragment extends Fragment {
             }
         });
 
-        SwitchCompat ciemnyMotywSwitch = view.findViewById(R.id.ciemny_motyw);
         ciemnyMotywSwitch.setChecked(isDarkMode);
         ciemnyMotywSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -80,6 +81,17 @@ public class SettingsFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Retrieve Dark Mode state again when the fragment is resumed
+        boolean isDarkMode = sharedPreferences.getBoolean("darkModeState", false);
+
+        // Update layout colors
+        updateLayoutColors(isDarkMode);
     }
 
     private void updateLayoutColors(boolean isDarkMode) {
@@ -102,6 +114,5 @@ public class SettingsFragment extends Fragment {
     private void updateTextSize(boolean isLargeText) {
         float textSize = isLargeText ? 60f : 40f;
         fridgeTextView.setTextSize(textSize);
-
     }
 }

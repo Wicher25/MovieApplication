@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/mylibrary_fr"
-        android:title= "MyLibrary"
+        android:title= "Zaskocz mnie"
         android:icon="@drawable/ic_library"
         />
     <item
